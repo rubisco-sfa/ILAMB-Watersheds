@@ -1,0 +1,31 @@
+
+ATS:
+  name: ATS
+  type: ATSPointResult
+  color: '#1f77b4'
+  path:
+   - /home/nate/work/ILAMB-Watershed/MODELS/ATS
+  file_to_site:
+    water_balance_computational_domain_CossatotRiverSMD1.33.csv: '07340300'
+    water_balance_computational_domain_Flatbrook_exp6SMD1.33.csv: '01440000'
+    water_balance_computational_domain_MayoRiverSMD1.33.csv: '02069700'
+    water_balance_computational_domain_NeversinkHeadwatersSMD1.33.csv: '01435000'
+    water_balance_computational_domain_TaylorUpstreamLULCSMD1.33.csv: '09107000'
+    water_balance_LittleTennessee_exp6SMD1.33.dat: '03500000'
+    water_balance_PantherCreek_exp6SMD1.33.dat: '02369800'
+  synonyms:
+    'net runoff': 'discharge'
+    
+ELM:
+  type: E3SMResult
+  color: '#ff7f0e'
+  path:
+   - /home/nate/work/ILAMB-Watershed/MODELS/E3SM
+  synonyms:
+    GPP: gpp
+
+CESM2:
+  modelname: CESM2
+  type: ModelResult
+  color: r
+  path: /home/nate/data/ILAMB/MODELS/CMIP6/CESM2
