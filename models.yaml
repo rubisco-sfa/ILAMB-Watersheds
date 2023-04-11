@@ -4,7 +4,7 @@ ATS:
   type: ATSPointResult
   color: '#1f77b4'
   path:
-   - /home/nate/work/ILAMB-Watershed/MODELS/ATS
+   - /home/nate/work/ILAMB-Watersheds/MODELS/ATS
   file_to_site:
     water_balance_computational_domain_CossatotRiverSMD1.33.csv: '07340300'
     water_balance_computational_domain_Flatbrook_exp6SMD1.33.csv: '01440000'
@@ -13,19 +13,37 @@ ATS:
     water_balance_computational_domain_TaylorUpstreamLULCSMD1.33.csv: '09107000'
     water_balance_LittleTennessee_exp6SMD1.33.dat: '03500000'
     water_balance_PantherCreek_exp6SMD1.33.dat: '02369800'
+    ARW_calibrated_qetsc_wb_1997-2020.csv: '12488500'
   synonyms:
     'net runoff': 'discharge'
-    
+    'watershed boundary discharge': 'discharge'
+
+NWM:
+  name: NWM
+  type: ATSPointResult
+  color: '#2ca02c'
+  path:
+   - /home/nate/work/ILAMB-Watersheds/MODELS/NWM
+  file_to_site:
+    NWM_streamflow_featureid24422913.csv: '12488500'
+  synonyms:
+    'Discharge': 'discharge'
+
+SWAT:
+  name: SWAT
+  type: ATSPointResult
+  color: '#d62728'
+  path:
+   - /home/nate/work/ILAMB-Watersheds/MODELS/SWAT
+  file_to_site:
+    calb_model_flow.csv: '12488500'
+  synonyms:
+    'flow': 'discharge'
+
 ELM:
   type: E3SMResult
   color: '#ff7f0e'
   path:
-   - /home/nate/work/ILAMB-Watershed/MODELS/E3SM
+   - /home/nate/work/ILAMB-Watersheds/MODELS/E3SM
   synonyms:
     GPP: gpp
-
-CESM2:
-  modelname: CESM2
-  type: ModelResult
-  color: r
-  path: /home/nate/data/ILAMB/MODELS/CMIP6/CESM2
