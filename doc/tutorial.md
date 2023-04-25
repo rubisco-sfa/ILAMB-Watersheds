@@ -33,7 +33,12 @@ cd ILAMB
 python -m pip install '.[watershed]'
 ```
 
-The `watershed` extras installs additional packages that we need to handle geographic projections and query the USGS data servers. By including them as extras, more traditional ILAMB users can avoid installing packages they do not need.
+The `watershed` extras installs additional packages that we need to handle geographic projections and query the USGS data servers. By including them as extras, more traditional ILAMB users can avoid installing packages they do not need. Note that depending on your system, you may also need to install `wget` and `gdal`. These can also be added with conda:
+
+```bash
+conda install wget
+conda install gdal
+```
 
 Finally we can test that all of this worked by running:
 
@@ -202,4 +207,150 @@ python -m http.server
 
 You will get some text saying that the page is being served to some address like http://0.0.0.0:8000/. Click on this clink and your results will load in your browser. If you are on a remote connection, you will need to move this `_build` directory to some web-viewable space or locally to your computer to view. Alternatively, I have copied the output from this step [here](https://www.climatemodeling.org/~nate/step1/) as well.
 
-## What Next
+## Next Steps: USGS Discharge
+
+If you made it this far, congratulations! These steps illustrate the basic functionality that ILAMB provides: a means to systematically compare your model output to reference datasets. They mostly use code and methods that we have developed in the past years. In what follows we will demostrate how ILAMB can be adapted and expanded to address application needs.
+
+For watershed comparisons, we have implemented a specialized *confrontation* (our term for the object which encapsulates a model-data comparison) which automatically queries USGS servers for discharge data. To set this up, add the following lines to the bottom of your `watersheds.cfg` file.
+
+```bash
+[USGS_mrro]
+ctype = "ConfUSGS"
+sitecode = "12488500"
+time_start = "1980-1-1"
+time_end = "2021-1-1"
+```
+
+This adds a special kind of confrontation, which we designate using the `ctype` keyword. This controls what kind of analysis is performed and can contain any custom code that a user wants to include. This confrontation is written to take in a USGS sitecode, along with a time frame, and automatically download the data needed to compare to model output. These sitecodes can be browsed on this interactive [map](https://maps.waterdata.usgs.gov/mapper/index.html). All that ILAMB needs is the code number and the comparison will use their interface to grab all the required data.
+
+When used to compare against gridded data, like we have with ELM, then ILAMB will integrate the runoff variable and compare against the gauge data. For this to work, we need to add another synonym to the ELM in our `models.yaml` file.
+
+```yaml
+  synonyms:
+    GPP: gpp
+    QRUNOFF: discharge
+```
+
+Now you re-run the same `ilamb-run` command as before. This time you will see an additional confrontation which bears the name from the USGS site `AMERICAN RIVER NEAR NILE, WA`.
+
+```bash
+(ilamb-watersheds) [nate@narwhal tutorial]$ ilamb-run --config watersheds.cfg --model_setup models.yaml
+                                             E3SM
+
+Parsing config file watersheds.cfg...
+
+                AmericanRiverWashington/MODIS_gpp Initialized
+                     AMERICAN RIVER NEAR NILE, WA Initialized
+
+Running model-confrontation pairs...
+
+                     AMERICAN RIVER NEAR NILE, WA E3SM                 Completed  0:00:31
+
+Finishing post-processing which requires collectives...
+
+                AmericanRiverWashington/MODIS_gpp E3SM                 Completed  0:00:02
+                     AMERICAN RIVER NEAR NILE, WA E3SM                 Completed  0:00:01
+
+Completed in  0:01:00
+```
+
+As before, we view the output by:
+
+```bash
+cd _build
+python -m http.server
+```
+and then follow the link. Alternatively, you can view what the output should look like by following this [link](https://www.climatemodeling.org/~nate/step2/). If you navigate to the USGS page, you will find statistics and plots like the following:
+
+![](https://www.climatemodeling.org/~nate/step2/USWatersheds/AmericanRiverWashington/USGS_mrro/E3SM_global_discharge.png)
+
+## Adding Point Models
+
+While the discharge metric for ELM looks decent, we should compare its performance to other models. We have collected results from the National Water Model (NWM),  Soil & Water Assessment Tool (SWAT), and the Advanced Terrestrial Simulator (ATS). However, while each of these models has been run on their own mesh, and handles the routing of runoff, the only output we have recorded is at the outlet which corresponds to our USGS station.
+
+We can integrate these models into ILAMB as well. First, add the output files to your collection.
+
+```bash
+cd MODELS
+wget https://www.climatemodeling.org/~nate/point_models.tgz
+tar -xvf point_models.tgz
+```
+
+Next, we need to add entries to our `models.yaml` file. There are a few key differences. This type the `type` of model we will use is one we have written to handle point output. This model type also requires that we provide a map between the file and the USGS sitecode. Ultimately we would rather harvest this information from the output file directly, but this will require these models making that change to embed the sitecode. Note that the variable representing `discharge` is different for each model. We simpy add the appropriate synonym to each model.
+
+```yaml
+ATS:
+  name: ATS
+  type: ModelPointResult
+  color: '#1f77b4'
+  path:
+   - MODELS/ATS
+  file_to_site:
+    ARW_calibrated_qetsc_wb_1997-2020.csv: '12488500'
+  synonyms:
+    'watershed boundary discharge': discharge
+
+NWM:
+  name: NWM
+  type: ModelPointResult
+  color: '#2ca02c'
+  path:
+   - MODELS/NWM
+  file_to_site:
+    NWM_streamflow_featureid24422913.csv: '12488500'
+  synonyms:
+    Discharge: discharge
+
+SWAT:
+  name: SWAT
+  type: ModelPointResult
+  color: '#d62728'
+  path:
+   - MODELS/SWAT
+  file_to_site:
+    calb_model_flow.csv: '12488500'
+  synonyms:
+    flow: discharge
+```
+
+Then we re-run the same `ilamb-run` command again:
+
+```
+(ilamb-watersheds) [nate@narwhal tutorial]$ ilamb-run --config watersheds.cfg --model_setup models.yaml
+                                             E3SM
+                                              ATS
+                                              NWM
+                                             SWAT
+
+Parsing config file watersheds.cfg...
+
+                AmericanRiverWashington/MODIS_gpp Initialized
+                     AMERICAN RIVER NEAR NILE, WA Initialized
+
+Running model-confrontation pairs...
+
+                AmericanRiverWashington/MODIS_gpp ATS                  VarNotInModel
+                AmericanRiverWashington/MODIS_gpp NWM                  VarNotInModel
+                AmericanRiverWashington/MODIS_gpp SWAT                 VarNotInModel
+                     AMERICAN RIVER NEAR NILE, WA ATS                  Completed  0:00:01
+                     AMERICAN RIVER NEAR NILE, WA NWM                  Completed  0:00:01
+                     AMERICAN RIVER NEAR NILE, WA SWAT                 Completed  0:00:01
+
+Finishing post-processing which requires collectives...
+
+                AmericanRiverWashington/MODIS_gpp E3SM                 Completed  0:00:02
+                AmericanRiverWashington/MODIS_gpp ATS                  Completed  0:00:01
+                AmericanRiverWashington/MODIS_gpp NWM                  Completed  0:00:01
+                AmericanRiverWashington/MODIS_gpp SWAT                 Completed  0:00:01
+                     AMERICAN RIVER NEAR NILE, WA E3SM                 Completed  0:00:01
+                     AMERICAN RIVER NEAR NILE, WA ATS                  Completed  0:00:01
+                     AMERICAN RIVER NEAR NILE, WA NWM                  Completed  0:00:01
+                     AMERICAN RIVER NEAR NILE, WA SWAT                 Completed  0:00:01
+
+Errors occurred in the run, please consult ./_build/ILAMB06.log for more detailed information
+
+Completed in  0:00:27
+```
+
+This tim you will see some `VarNotInModel` errors for MODIS gpp. This is because these point models do not have that variable available. Instead of failing, ILAMB just skips this and continues to compute on what is present. View the output as before or follow this [link](https://www.climatemodeling.org/~nate/step3/) to a version we have cached for you.
+
