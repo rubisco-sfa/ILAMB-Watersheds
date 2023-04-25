@@ -231,6 +231,12 @@ When used to compare against gridded data, like we have with ELM, then ILAMB wil
     QRUNOFF: discharge
 ```
 
+Because we are changing something about the model, we need to clear the model cache so that the additional synonym will be available in the ILAMB analysis.
+
+```bash
+rm _build/ELM.pkl
+```
+
 Now you re-run the same `ilamb-run` command as before. This time you will see an additional confrontation which bears the name from the USGS site `AMERICAN RIVER NEAR NILE, WA`.
 
 ```bash
@@ -352,5 +358,5 @@ Errors occurred in the run, please consult ./_build/ILAMB06.log for more detaile
 Completed in  0:00:27
 ```
 
-This tim you will see some `VarNotInModel` errors for MODIS gpp. This is because these point models do not have that variable available. Instead of failing, ILAMB just skips this and continues to compute on what is present. View the output as before or follow this [link](https://www.climatemodeling.org/~nate/step3/) to a version we have cached for you.
+This time you will see some `VarNotInModel` errors for MODIS gpp. This is because these point models do not have that variable available. Instead of failing, ILAMB just skips this and continues to compute on what is present. View the output as before or follow this [link](https://www.climatemodeling.org/~nate/step3/) to a version we have cached for you.
 
