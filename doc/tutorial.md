@@ -50,7 +50,7 @@ If you get a numeric `2.6`, then your ILAMB package should be setup correctly an
 
 ## Setting Up Your Data
 
-This tutorial is meant to work on the raw output from the ELM run conducted in the first part of this tutorial. If you were not able to run the model or were not present, we have bundled a version of the [output](https://www.climatemodeling.org/~nate/ELM.tgz) that you can download and use. Please note that to keep the size managable, we have removed most of the variables.
+This tutorial is meant to work on the raw output from the ELM run conducted in the first part of this tutorial. If you were not able to run the model or were not present, we have bundled a version of the [output](https://www.ilamb.org/~nate/ELM.tgz) that you can download and use. Please note that to keep the size managable, we have removed most of the variables.
 
 If you would like to use the data from your run you either need to:
 
@@ -67,7 +67,7 @@ cd MODELS
 If you are using your own model output, then this is where we need to place your `h0` and `h1` netCDF files from the docker image. Note that you can simply provide a link to the folder where you have the files downloaded if you prefer not to move them. Alternatively, if you are using the sample output that we have prepared for you, then here is where we need to expand the tar-ball.
 
 ```bash
-wget https://www.climatemodeling.org/~nate/ELM.tgz
+wget https://www.ilamb.org/~nate/ELM.tgz
 tar -xvf ELM.tgz
 ```
 
@@ -83,7 +83,7 @@ mkdir DATA
 cd DATA
 mkdir MODIS
 cd MODIS
-wget https://www.climatemodeling.org/~nate/AmericanRiverWashington.nc
+wget https://www.ilamb.org/~nate/AmericanRiverWashington.nc
 ```
 
 At this point, we are ready to setup our ILAMB analysis. As a check, your data should look like this:
@@ -205,7 +205,7 @@ cd _build
 python -m http.server
 ```
 
-You will get some text saying that the page is being served to some address like http://0.0.0.0:8000/. Click on this clink and your results will load in your browser. If you are on a remote connection, you will need to move this `_build` directory to some web-viewable space or locally to your computer to view. Alternatively, I have copied the output from this step [here](https://www.climatemodeling.org/~nate/step1/) as well.
+You will get some text saying that the page is being served to some address like http://0.0.0.0:8000/. Click on this clink and your results will load in your browser. If you are on a remote connection, you will need to move this `_build` directory to some web-viewable space or locally to your computer to view. Alternatively, I have copied the output from this step [here](https://www.ilamb.org/~nate/step1/) as well.
 
 ## Next Steps: USGS Discharge
 
@@ -266,9 +266,9 @@ As before, we view the output by:
 cd _build
 python -m http.server
 ```
-and then follow the link. Alternatively, you can view what the output should look like by following this [link](https://www.climatemodeling.org/~nate/step2/). If you navigate to the USGS page, you will find statistics and plots like the following:
+and then follow the link. Alternatively, you can view what the output should look like by following this [link](https://www.ilamb.org/~nate/step2/). If you navigate to the USGS page, you will find statistics and plots like the following:
 
-![](https://www.climatemodeling.org/~nate/step2/USWatersheds/AmericanRiverWashington/USGS_mrro/E3SM_global_discharge.png)
+![](https://www.ilamb.org/~nate/step2/USWatersheds/AmericanRiverWashington/USGS_mrro/E3SM_global_discharge.png)
 
 ## Adding Point Models
 
@@ -278,7 +278,7 @@ We can integrate these models into ILAMB as well. First, add the output files to
 
 ```bash
 cd MODELS
-wget https://www.climatemodeling.org/~nate/point_models.tgz
+wget https://www.ilamb.org/~nate/point_models.tgz
 tar -xvf point_models.tgz
 ```
 
@@ -358,5 +358,5 @@ Errors occurred in the run, please consult ./_build/ILAMB06.log for more detaile
 Completed in  0:00:27
 ```
 
-This time you will see some `VarNotInModel` errors for MODIS gpp. This is because these point models do not have that variable available. Instead of failing, ILAMB just skips this and continues to compute on what is present. View the output as before or follow this [link](https://www.climatemodeling.org/~nate/step3/) to a version we have cached for you.
+This time you will see some `VarNotInModel` errors for MODIS gpp. This is because these point models do not have that variable available. Instead of failing, ILAMB just skips this and continues to compute on what is present. View the output as before or follow this [link](https://www.ilamb.org/~nate/step3/) to a version we have cached for you.
 
