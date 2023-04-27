@@ -45,3 +45,6 @@ ELM:
   synonyms:
     GPP: gpp
     QRUNOFF: discharge
+  unit_replace:
+    gC: g
+    '/m2s': ' m-2 s-1'
