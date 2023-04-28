@@ -155,6 +155,8 @@ ELM:
    - MODELS/ELM
   synonyms:
     GPP: gpp
+  unit_replace:
+    gC: g
 ```
 
 I apologize for having multiple file types to setup ILAMB. This code has been around now for 7 years and technology continues to evolve. In the future we will be transitioning to simply using `yaml` formats for everthing. Let's discuss the contents of each line of this file.
@@ -164,6 +166,7 @@ I apologize for having multiple file types to setup ILAMB. This code has been ar
 * We can assign a color to the model. When running with multiple models, this will be the color this model appears as the line plots.
 * This `path` variable can be a list of paths of where to find model output. It can be an absolute path if your model output is located elsewhere or in some standard location, but here points to where we have copied our ELM output.
 * You can now define synonyms for your model. In the configure file, we used the CMOR variable `gpp` but ELM uses `GPP`. This section signals that when `gpp` is required of this model, use `GPP` instead. This keeps you from having to run output conversion routines. In this case the difference is only case, but in general variable names might not resemble each other at all.
+* Many times the raw output from models does not provide a unit string that is compatible with standards. The `E3SMResult` model object allows you to specify a `unit_replace` dictionary which will be applied to the unit string of any variable you try to access. In this case, we need to remove the `C` from `gC` (grams carbon) as this is not a unit that the UDunits2 library recognizes.
 
 ### Finally the Run
 
